@@ -1,4 +1,4 @@
-# Monorepo EP3 - InnovaTech
+# EV3 - InnovaTech
 
 Este repositorio contiene el desarrollo completo de la Evaluación Parcial 3, integrando:
 - ✅ **Backend**: Servicios de Ventas y Despachos (Spring Boot)
