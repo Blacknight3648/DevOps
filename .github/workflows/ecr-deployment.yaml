@@ -10,9 +10,11 @@ permissions:
 
 env:
   AWS_REGION: us-east-1
+  ECR_REPO_DB_DESPACHOS: innovatech-chile/db-innovatech-despacho
+  ECR_REPO_DB_VENTAS: innovatech-chile/db-innovatech-ventas
   ECR_REPO_DESPACHOS: innovatech-chile/backend-api-despacho
   ECR_REPO_VENTAS: innovatech-chile/backend-api-ventas
-  ECR_REPO_FRONTEND: innovatech-chile/frontend
+  ECR_REPO_FRONTEND: innovatech_chile/frontend
   IMAGE_TAG: latest
 
 jobs:
@@ -35,6 +37,16 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Build Docker image - DB Despachos
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: docker build -t $ECR_REGISTRY/$ECR_REPO_DB_DESPACHOS:$IMAGE_TAG ./backend/db-innovatech-despacho
+
+      - name: Build Docker image - DB Ventas
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: docker build -t $ECR_REGISTRY/$ECR_REPO_DB_VENTAS:$IMAGE_TAG ./backend/db-innovatech-ventas
+
       - name: Build Docker image - Despachos
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -49,6 +61,16 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: docker build -t $ECR_REGISTRY/$ECR_REPO_FRONTEND:$IMAGE_TAG ./frontend/front_despacho
+
+      - name: Push Docker image - DB Despachos
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: docker push $ECR_REGISTRY/$ECR_REPO_DB_DESPACHOS:$IMAGE_TAG
+
+      - name: Push Docker image - DB Ventas
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: docker push $ECR_REGISTRY/$ECR_REPO_DB_VENTAS:$IMAGE_TAG
 
       - name: Push Docker image - Despachos
         env:
