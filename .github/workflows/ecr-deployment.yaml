@@ -40,12 +40,12 @@ jobs:
       - name: Build Docker image - DB Despachos
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: docker build -t $ECR_REGISTRY/$ECR_REPO_DB_DESPACHOS:$IMAGE_TAG ./backend/db-innovatech-despacho
+        run: docker build -t $ECR_REGISTRY/$ECR_REPO_DB_DESPACHOS:$IMAGE_TAG ./db-innovatech-despacho
 
       - name: Build Docker image - DB Ventas
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: docker build -t $ECR_REGISTRY/$ECR_REPO_DB_VENTAS:$IMAGE_TAG ./backend/db-innovatech-ventas
+        run: docker build -t $ECR_REGISTRY/$ECR_REPO_DB_VENTAS:$IMAGE_TAG ./db-innovatech-ventas
 
       - name: Build Docker image - Despachos
         env:
