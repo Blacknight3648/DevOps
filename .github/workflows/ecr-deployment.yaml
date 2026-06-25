@@ -1,0 +1,65 @@
+name: Build and Push to ECR
+
+on:
+  push:
+    branches:
+      - deploy
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPO_DESPACHOS: innovatech-chile/backend-api-despacho
+  ECR_REPO_VENTAS: innovatech-chile/backend-api-ventas
+  ECR_REPO_FRONTEND: innovatech-chile/frontend-innovatech
+  IMAGE_TAG: latest
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker image - Despachos
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: docker build -t $ECR_REGISTRY/$ECR_REPO_DESPACHOS:$IMAGE_TAG ./backend/Springboot-API-REST-DESPACHO
+
+      - name: Build Docker image - Ventas
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: docker build -t $ECR_REGISTRY/$ECR_REPO_VENTAS:$IMAGE_TAG ./backend/Springboot-API-REST-VENTAS
+
+      - name: Build Docker image - Frontend
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: docker build -t $ECR_REGISTRY/$ECR_REPO_FRONTEND:$IMAGE_TAG ./frontend/front_despacho
+
+      - name: Push Docker image - Despachos
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: docker push $ECR_REGISTRY/$ECR_REPO_DESPACHOS:$IMAGE_TAG
+
+      - name: Push Docker image - Ventas
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: docker push $ECR_REGISTRY/$ECR_REPO_VENTAS:$IMAGE_TAG
+
+      - name: Push Docker image - Frontend
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: docker push $ECR_REGISTRY/$ECR_REPO_FRONTEND:$IMAGE_TAG
