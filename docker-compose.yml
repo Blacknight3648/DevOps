@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: db-innovatech
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - red-backend
+
+  ventas-service:
+    image: ${DOCKERHUB_USERNAME}/backend-ventas:latest
+    container_name: api-ventas-innovatech
+    restart: always
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${DB_NAME}
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "${VENTAS_PORT}:8081"
+    depends_on:
+      - db
+    networks:
+      - red-backend
+
+  despachos-service:
+    image: ${DOCKERHUB_USERNAME}/backend-despachos:latest
+    container_name: api-despachos-innovatech
+    restart: always
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${DB_NAME}
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "${DESPACHOS_PORT}:8082"
+    depends_on:
+      - db
+    networks:
+      - red-backend
+
+  frontend:
+    image: ${DOCKERHUB_USERNAME}/frontend-innovatech:latest
+    container_name: frontend-innovatech
+    restart: always
+    ports:
+      - "${FRONTEND_PORT}:8050"
+    depends_on:
+      - ventas-service
+      - despachos-service
+    networks:
+      - red-backend
+
+volumes:
+  db_data:
+
+networks:
+  red-backend:
+    driver: bridge
