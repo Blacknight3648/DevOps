@@ -12,7 +12,7 @@ env:
   AWS_REGION: us-east-1
   ECR_REPO_DESPACHOS: innovatech-chile/backend-api-despacho
   ECR_REPO_VENTAS: innovatech-chile/backend-api-ventas
-  ECR_REPO_FRONTEND: innovatech-chile/frontend-innovatech
+  ECR_REPO_FRONTEND: innovatech-chile/frontend
   IMAGE_TAG: latest
 
 jobs:
