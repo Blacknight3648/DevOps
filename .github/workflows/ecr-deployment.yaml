@@ -10,11 +10,11 @@ permissions:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPO_DB_DESPACHOS: innovatech-chile/db-innovatech-despacho
-  ECR_REPO_DB_VENTAS: innovatech-chile/db-innovatech-ventas
-  ECR_REPO_DESPACHOS: innovatech-chile/backend-api-despacho
-  ECR_REPO_VENTAS: innovatech-chile/backend-api-ventas
-  ECR_REPO_FRONTEND: innovatech_chile/frontend
+  ECR_REPO_DB_DESPACHOS: ${{ vars.ECR_REPO_DB_DESPACHOS }}
+  ECR_REPO_DB_VENTAS: ${{ vars.ECR_REPO_DB_VENTAS }}
+  ECR_REPO_DESPACHOS: ${{ vars.ECR_REPO_DESPACHOS }}
+  ECR_REPO_VENTAS: ${{ vars.ECR_REPO_VENTAS }}
+  ECR_REPO_FRONTEND: ${{ vars.ECR_REPO_FRONTEND }}
   IMAGE_TAG: latest
 
 jobs:
@@ -73,6 +73,7 @@ jobs:
 
       - name: Push Docker image - DB Ventas
         env:
+
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: docker push $ECR_REGISTRY/$ECR_REPO_DB_VENTAS:$IMAGE_TAG
 
