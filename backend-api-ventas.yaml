@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-api-ventas
+  labels:
+    app: backend-api-ventas
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-api-ventas
+  template:
+    metadata:
+      labels:
+        app: backend-api-ventas
+    spec:
+      containers:
+      - name: backend-api-ventas
+        image: 038829592990.dkr.ecr.us-east-1.amazonaws.com/innovatech_chile/backend-api-ventas:latest
+        ports:
+        - containerPort: 8081
+        env:
+        - name: DB_ENDPOINT
+          value: "database-1.cxxx.us-east-1.rds.amazonaws.com" # TODO: Cambiar por tu endpoint de RDS
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_NAME
+          value: "ventas_db"
+        - name: DB_USERNAME
+          value: "admin"
+        - name: DB_PASSWORD
+          value: "admin" # TODO: Usa Kubernetes Secrets para la contraseña en prod
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ventas-service
+spec:
+  selector:
+    app: backend-api-ventas
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+  type: ClusterIP

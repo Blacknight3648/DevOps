@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-api-despacho
+  labels:
+    app: backend-api-despacho
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-api-despacho
+  template:
+    metadata:
+      labels:
+        app: backend-api-despacho
+    spec:
+      containers:
+      - name: backend-api-despacho
+        image: 038829592990.dkr.ecr.us-east-1.amazonaws.com/innovatech_chile/backend-api-despacho:latest
+        ports:
+        - containerPort: 8082
+        env:
+        - name: DB_ENDPOINT
+          value: "database-1.cxxx.us-east-1.rds.amazonaws.com" # TODO: Cambiar por tu endpoint de RDS
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_NAME
+          value: "despachos_db"
+        - name: DB_USERNAME
+          value: "admin"
+        - name: DB_PASSWORD
+          value: "admin" # TODO: Usa Kubernetes Secrets para la contraseña en prod
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: despachos-service
+spec:
+  selector:
+    app: backend-api-despacho
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8082
+  type: ClusterIP
