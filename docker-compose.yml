@@ -17,6 +17,7 @@ services:
       - red-backend
 
   ventas-service:
+    build: ./backend/Springboot-API-REST-VENTAS
     image: ${DOCKERHUB_USERNAME}/backend-ventas:latest
     container_name: api-ventas-innovatech
     restart: always
@@ -32,6 +33,7 @@ services:
       - red-backend
 
   despachos-service:
+    build: ./backend/Springboot-API-REST-DESPACHO
     image: ${DOCKERHUB_USERNAME}/backend-despachos:latest
     container_name: api-despachos-innovatech
     restart: always
@@ -47,6 +49,7 @@ services:
       - red-backend
 
   frontend:
+    build: ./frontend/front_despacho
     image: ${DOCKERHUB_USERNAME}/frontend-innovatech:latest
     container_name: frontend-innovatech
     restart: always
