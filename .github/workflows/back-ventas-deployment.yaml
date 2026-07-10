@@ -1,20 +1,20 @@
-name: Build and Push to ECR
+name: Build and Push Ventas to ECR
 
 on:
   push:
     branches:
       - deploy
+    paths:
+      - 'backend/Springboot-API-REST-VENTAS/**'
+      - '.github/workflows/back-ventas-deployment.yaml'
 
 permissions:
   contents: read
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPO_DB_DESPACHOS: ${{ vars.ECR_REPO_DB_DESPACHOS }}
   ECR_REPO_DB_VENTAS: ${{ vars.ECR_REPO_DB_VENTAS }}
-  ECR_REPO_DESPACHOS: ${{ vars.ECR_REPO_DESPACHOS }}
   ECR_REPO_VENTAS: ${{ vars.ECR_REPO_VENTAS }}
-  ECR_REPO_FRONTEND: ${{ vars.ECR_REPO_FRONTEND }}
   IMAGE_TAG: latest
 
 jobs:
@@ -37,13 +37,6 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Pull and Tag Docker image - DB Despachos
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: |
-          docker pull postgres:15-alpine
-          docker tag postgres:15-alpine $ECR_REGISTRY/$ECR_REPO_DB_DESPACHOS:$IMAGE_TAG
-
       - name: Pull and Tag Docker image - DB Ventas
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -51,43 +44,17 @@ jobs:
           docker pull postgres:15-alpine
           docker tag postgres:15-alpine $ECR_REGISTRY/$ECR_REPO_DB_VENTAS:$IMAGE_TAG
 
-      - name: Build Docker image - Despachos
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: docker build -t $ECR_REGISTRY/$ECR_REPO_DESPACHOS:$IMAGE_TAG ./backend/Springboot-API-REST-DESPACHO
-
       - name: Build Docker image - Ventas
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: docker build -t $ECR_REGISTRY/$ECR_REPO_VENTAS:$IMAGE_TAG ./backend/Springboot-API-REST-VENTAS
 
-      - name: Build Docker image - Frontend
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: docker build -t $ECR_REGISTRY/$ECR_REPO_FRONTEND:$IMAGE_TAG ./frontend/front_despacho
-
-      - name: Push Docker image - DB Despachos
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: docker push $ECR_REGISTRY/$ECR_REPO_DB_DESPACHOS:$IMAGE_TAG
-
       - name: Push Docker image - DB Ventas
         env:
-
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: docker push $ECR_REGISTRY/$ECR_REPO_DB_VENTAS:$IMAGE_TAG
-
-      - name: Push Docker image - Despachos
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: docker push $ECR_REGISTRY/$ECR_REPO_DESPACHOS:$IMAGE_TAG
 
       - name: Push Docker image - Ventas
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: docker push $ECR_REGISTRY/$ECR_REPO_VENTAS:$IMAGE_TAG
-
-      - name: Push Docker image - Frontend
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: docker push $ECR_REGISTRY/$ECR_REPO_FRONTEND:$IMAGE_TAG
