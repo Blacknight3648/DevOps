@@ -17,7 +17,7 @@ export const PruebaCards = () => {
     <section>
       <div className="flex justify-center flex-wrap gap-4 mb-4">
         <CardComponent
-          title="Crear Orden de compra ➕"
+          title="Crear Orden de compra 🛒➕"
           description="Genera una nueva orden de compra en el sistema"
           buttonText="Crear"
           onClick={() => setOpenModalVenta(true)}
