@@ -2,6 +2,18 @@ import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import axios from "axios";
 
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.stopTimer;
+    toast.onmouseleave = Swal.resumeTimer;
+  }
+});
+
 export const FormDespacho = ({ venta, onClose }) => {
   const { register, handleSubmit } = useForm();
 
@@ -40,14 +52,16 @@ export const FormDespacho = ({ venta, onClose }) => {
           'Accept': 'application/json'
     }
       });
-      Swal.fire({
-        title: "Despacho registrado 🛻!",
-        text: "El despacho ha sido generado con éxito en la base de datos",
+      Toast.fire({
         icon: "success",
-        confirmButtonText: "Aceptar",
+        title: "Despacho registrado 🛻!"
       });
     } catch (error) {
       console.error("Error en la solicitud:", error);
+      Toast.fire({
+        icon: "error",
+        title: "Error al registrar el despacho"
+      });
     }
     onClose();
   };
